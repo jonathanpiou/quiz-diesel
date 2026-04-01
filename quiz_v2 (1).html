@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz – Injection Diesel | BTS MVVP</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #2563EB;
+    --blue-light: #EFF6FF;
+    --blue-mid: #BFDBFE;
+    --green: #16A34A;
+    --green-light: #F0FDF4;
+    --green-mid: #BBF7D0;
+    --red: #DC2626;
+    --red-light: #FEF2F2;
+    --red-mid: #FECACA;
+    --orange: #EA580C;
+    --orange-light: #FFF7ED;
+    --purple: #7C3AED;
+    --purple-light: #F5F3FF;
+    --yellow: #D97706;
+    --yellow-light: #FFFBEB;
+    --gray-50: #F8FAFC;
+    --gray-100: #F1F5F9;
+    --gray-200: #E2E8F0;
+    --gray-400: #94A3B8;
+    --gray-600: #475569;
+    --gray-800: #1E293B;
+    --gray-900: #0F172A;
+    --radius: 14px;
+    --radius-sm: 10px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: linear-gradient(135deg, #EFF6FF 0%, #F5F3FF 50%, #FFF7ED 100%);
+    color: var(--gray-800);
+    min-height: 100vh;
+    padding: 1rem;
+  }
+  .container { max-width: 640px; margin: 0 auto; padding-bottom: 3rem; }
+
+  .header { text-align: center; padding: 2rem 0 1.5rem; }
+  .header .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: linear-gradient(135deg, #2563EB, #7C3AED);
+    color: #fff; font-size: 12px; font-weight: 600;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 6px 16px; border-radius: 99px; margin-bottom: 1rem;
+  }
+  .header h1 { font-size: 26px; font-weight: 600; color: var(--gray-900); line-height: 1.3; margin-bottom: 0.4rem; }
+  .header p { font-size: 14px; color: var(--gray-600); }
+
+  .card {
+    background: #fff; border-radius: var(--radius);
+    border: 1.5px solid var(--gray-200);
+    padding: 1.75rem; margin-bottom: 1rem;
+    box-shadow: 0 2px 12px rgba(37,99,235,0.07);
+  }
+  .card label { display: block; font-size: 13px; font-weight: 600; color: var(--gray-600); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .card input[type="text"] {
+    width: 100%; padding: 12px 14px;
+    border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif; font-size: 16px; color: var(--gray-800); outline: none; transition: border-color 0.2s;
+  }
+  .card input[type="text"]:focus { border-color: var(--blue); }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 1.25rem; }
+  .info-item { background: linear-gradient(135deg, #EFF6FF, #F5F3FF); border-radius: var(--radius-sm); padding: 12px 14px; border: 1px solid var(--blue-mid); }
+  .info-item .val { font-size: 20px; font-weight: 600; color: var(--blue); }
+  .info-item .lbl { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+  .ref-block { background: #fff; border-radius: var(--radius); border: 1.5px solid var(--gray-200); padding: 1.25rem 1.5rem; margin-bottom: 1rem; box-shadow: 0 2px 12px rgba(37,99,235,0.07); }
+  .ref-block .ref-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--purple); margin-bottom: 1rem; display: flex; align-items: center; gap: 6px; }
+  .ref-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1rem; }
+  .ref-comp { display: flex; align-items: flex-start; gap: 8px; padding: 8px 10px; background: var(--purple-light); border-radius: var(--radius-sm); border: 1px solid #DDD6FE; }
+  .ref-comp .code { font-size: 12px; font-weight: 700; color: var(--purple); font-family: 'DM Mono', monospace; flex-shrink: 0; margin-top: 1px; }
+  .ref-comp .label { font-size: 12px; color: #4C1D95; line-height: 1.4; }
+  .ref-savoirs { border-top: 1px solid var(--gray-200); padding-top: 10px; margin-top: 4px; }
+  .ref-savoirs .stitle { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--orange); margin-bottom: 6px; }
+  .savoir-item { display: flex; align-items: flex-start; gap: 8px; padding: 6px 10px; background: var(--orange-light); border-radius: var(--radius-sm); border: 1px solid #FED7AA; margin-bottom: 6px; }
+  .savoir-item .scode { font-size: 12px; font-weight: 700; color: var(--orange); font-family: 'DM Mono', monospace; flex-shrink: 0; }
+  .savoir-item .slabel { font-size: 12px; color: #7C2D12; line-height: 1.4; }
+
+  .btn { display: block; width: 100%; padding: 14px; border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; text-align: center; }
+  .btn-primary { background: linear-gradient(135deg, #2563EB, #7C3AED); color: #fff; }
+  .btn-primary:hover { opacity: 0.92; transform: translateY(-1px); }
+  .btn-primary:disabled { background: var(--gray-200); color: var(--gray-400); cursor: not-allowed; transform: none; }
+  .btn-outline { background: transparent; color: var(--blue); border: 1.5px solid var(--blue); margin-top: 10px; }
+  .btn-outline:hover { background: var(--blue-light); }
+
+  .progress-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 13px; color: var(--gray-600); font-weight: 500; }
+  .progress-track { height: 7px; background: var(--gray-200); border-radius: 99px; margin-bottom: 1.25rem; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #2563EB, #7C3AED); border-radius: 99px; transition: width 0.4s ease; }
+
+  .timer-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 1rem; }
+  .timer-circle {
+    width: 52px; height: 52px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 600; font-family: 'DM Mono', monospace;
+    border: 3px solid var(--blue); color: var(--blue);
+    background: var(--blue-light); transition: all 0.5s;
+    position: relative;
+  }
+  .timer-circle.warning { border-color: var(--orange); color: var(--orange); background: var(--orange-light); }
+  .timer-circle.danger { border-color: var(--red); color: var(--red); background: var(--red-light); animation: pulse 0.5s infinite; }
+  @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+
+  .theme-tag {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    padding: 4px 12px; border-radius: 99px; margin-bottom: 1rem;
+  }
+  .theme-A { background: #EFF6FF; color: #1D4ED8; }
+  .theme-B { background: #F5F3FF; color: #5B21B6; }
+  .theme-C { background: #FFF7ED; color: #C2410C; }
+  .theme-D { background: #F0FDF4; color: #15803D; }
+  .theme-E { background: #FEF2F2; color: #B91C1C; }
+
+  .question { font-size: 17px; font-weight: 500; color: var(--gray-900); line-height: 1.55; margin-bottom: 1.25rem; }
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .opt {
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 15px; border-radius: var(--radius-sm);
+    border: 1.5px solid var(--gray-200); background: #fff;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    font-size: 15px; color: var(--gray-800); text-align: left;
+    transition: border-color 0.15s, background 0.15s, transform 0.1s;
+    width: 100%;
+  }
+  .opt:hover:not(:disabled) { border-color: var(--blue); background: var(--blue-light); transform: translateX(3px); }
+  .opt:disabled { cursor: default; }
+  .opt.correct { border-color: var(--green); background: var(--green-light); color: #14532D; }
+  .opt.wrong { border-color: var(--red); background: var(--red-light); color: #7F1D1D; }
+  .opt-letter {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--gray-100); color: var(--gray-600);
+    font-size: 13px; font-weight: 600; font-family: 'DM Mono', monospace;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .opt.correct .opt-letter { background: var(--green); color: #fff; }
+  .opt.wrong .opt-letter { background: var(--red); color: #fff; }
+
+  .feedback { margin-top: 1rem; border-radius: var(--radius-sm); padding: 14px 16px; display: none; font-size: 14px; line-height: 1.6; }
+  .feedback.correct { background: var(--green-light); border: 1.5px solid var(--green-mid); color: #14532D; }
+  .feedback.wrong { background: var(--red-light); border: 1.5px solid var(--red-mid); color: #7F1D1D; }
+  .feedback strong { display: block; font-size: 15px; margin-bottom: 4px; }
+  .next-btn { margin-top: 1rem; display: none; }
+
+  .result-hero { text-align: center; padding: 2rem 1rem 1.5rem; }
+  .result-hero .icon { font-size: 52px; margin-bottom: 0.75rem; }
+  .result-hero h2 { font-size: 24px; font-weight: 600; color: var(--gray-900); margin-bottom: 0.5rem; }
+  .score-display { font-size: 60px; font-weight: 600; font-family: 'DM Mono', monospace; background: linear-gradient(135deg, #2563EB, #7C3AED); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin: 0.5rem 0; }
+  .mention { display: inline-block; padding: 6px 20px; border-radius: 99px; font-size: 13px; font-weight: 600; margin-bottom: 1.5rem; }
+  .mention.excellent { background: var(--green-light); color: var(--green); }
+  .mention.bien { background: var(--blue-light); color: var(--blue); }
+  .mention.passable { background: var(--orange-light); color: var(--orange); }
+  .mention.insuffisant { background: var(--red-light); color: var(--red); }
+
+  .recap-list { display: flex; flex-direction: column; gap: 8px; margin-top: 0.5rem; }
+  .recap-item { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--gray-600); line-height: 1.5; padding: 10px 12px; border-radius: var(--radius-sm); background: var(--gray-50); border: 1px solid var(--gray-200); }
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+  .dot.ok { background: var(--green); }
+  .dot.ko { background: var(--red); }
+  .sending-msg { text-align: center; font-size: 13px; color: var(--gray-400); padding: 0.75rem; }
+  .erreur-item { border-radius: var(--radius-sm); border: 1.5px solid var(--red-mid); background: var(--red-light); padding: 14px 16px; margin-bottom: 12px; }
+  .erreur-item .erreur-theme { font-size: 11px; font-weight: 600; color: var(--red); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .erreur-item .erreur-q { font-size: 14px; font-weight: 600; color: var(--gray-900); margin-bottom: 8px; line-height: 1.4; }
+  .erreur-item .erreur-bonne { font-size: 13px; color: var(--green); font-weight: 600; margin-bottom: 6px; }
+  .erreur-item .erreur-expl { font-size: 13px; color: var(--gray-600); line-height: 1.6; border-top: 1px solid var(--red-mid); padding-top: 8px; margin-top: 4px; }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  @media (max-width: 480px) {
+    .question { font-size: 15px; }
+    .opt { font-size: 14px; padding: 11px 12px; }
+    .score-display { font-size: 44px; }
+    .info-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">⚙ BTS MVVP – Injection Diesel</div>
+    <h1>Quiz Formatif</h1>
+    <p>Correction immédiate · 25 secondes par question</p>
+  </div>
+
+  <div id="screen-accueil" class="screen active">
+
+    <div class="ref-block">
+      <div class="ref-title">📋 Compétences du référentiel BTS MV mobilisées</div>
+      <div class="ref-grid">
+        <div class="ref-comp"><span class="code">C1.1</span><span class="label">Décrire le fonctionnement du système</span></div>
+        <div class="ref-comp"><span class="code">C1.2</span><span class="label">Identifier les grandeurs d'entrée/sortie</span></div>
+        <div class="ref-comp"><span class="code">C1.3</span><span class="label">Caractériser les performances du système</span></div>
+        <div class="ref-comp"><span class="code">C2.1</span><span class="label">Valider le dysfonctionnement</span></div>
+        <div class="ref-comp"><span class="code">C2.2</span><span class="label">Émettre des hypothèses liées aux symptômes</span></div>
+        <div class="ref-comp"><span class="code">C2.3</span><span class="label">Effectuer des mesures, des essais</span></div>
+        <div class="ref-comp"><span class="code">C2.4</span><span class="label">Déterminer les éléments défaillants</span></div>
+        <div class="ref-comp"><span class="code">C3.2</span><span class="label">Remettre en conformité, régler, paramétrer</span></div>
+      </div>
+      <div class="ref-savoirs">
+        <div class="stitle">Savoirs associés</div>
+        <div class="savoir-item"><span class="scode">S2.1</span><span class="slabel">Alimentation en carburant : injection haute pression diesel, common rail, stratégies de dépollution</span></div>
+        <div class="savoir-item"><span class="scode">S2.1</span><span class="slabel">Moteur à combustion interne : caractéristiques géométriques, combustion, rapport volumétrique</span></div>
+        <div class="savoir-item"><span class="scode">S2.2</span><span class="slabel">Capteurs, calculateurs et actionneurs du système d'injection</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <label for="prenom">Ton prénom et nom</label>
+      <input type="text" id="prenom" placeholder="Ex : Lucas Martin" oninput="checkPrenom()" />
+      <div class="info-grid">
+        <div class="info-item"><div class="val">30</div><div class="lbl">Questions</div></div>
+        <div class="info-item"><div class="val">25s</div><div class="lbl">Par question</div></div>
+        <div class="info-item"><div class="val">~15 min</div><div class="lbl">Durée</div></div>
+      </div>
+    </div>
+    <button class="btn btn-primary" id="btn-start" disabled onclick="startQuiz()">Commencer le quiz →</button>
+  </div>
+
+  <div id="screen-quiz" class="screen">
+    <div class="progress-row">
+      <span id="q-num">Question 1 / 30</span>
+      <span id="q-score">Score : 0</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <div class="card">
+      <div class="timer-row">
+        <div class="timer-circle" id="timer-circle">25</div>
+      </div>
+      <div class="theme-tag theme-A" id="q-theme"></div>
+      <div class="question" id="q-text"></div>
+      <div class="options" id="q-options"></div>
+      <div class="feedback" id="feedback">
+        <strong id="fb-title"></strong>
+        <span id="fb-text"></span>
+      </div>
+      <button class="btn btn-primary next-btn" id="next-btn"></button>
+    </div>
+  </div>
+
+  <div id="screen-results" class="screen">
+    <div class="card">
+      <div class="result-hero">
+        <div class="icon" id="res-icon"></div>
+        <h2>Quiz terminé !</h2>
+        <div class="score-display" id="res-score"></div>
+        <div style="font-size:14px;color:var(--gray-400);margin-bottom:0.75rem" id="res-pct"></div>
+        <div class="mention" id="res-mention"></div>
+      </div>
+      <div class="sending-msg" id="sending-msg">Envoi des résultats en cours…</div>
+      <div id="recap-title" style="font-size:13px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;display:none">Détail par question</div>
+      <div class="recap-list" id="recap-list"></div>
+    </div>
+
+    <div class="card" id="erreurs-card" style="display:none; border-left: 4px solid var(--red);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:0.05em;">Mes erreurs à retravailler</div>
+          <div style="font-size:12px;color:var(--gray-400);margin-top:2px" id="nb-erreurs"></div>
+        </div>
+        <button class="btn" id="btn-pdf" onclick="telechargerPDF()" style="width:auto;padding:8px 16px;background:linear-gradient(135deg,#DC2626,#EA580C);color:#fff;font-size:13px;border-radius:99px;">⬇ Télécharger PDF</button>
+      </div>
+      <div id="erreurs-list"></div>
+    </div>
+
+    <button class="btn btn-outline" onclick="restart()">↺ Recommencer</button>
+  </div>
+</div>
+
+<script>
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw7357V66VDFUUv6Djx5KXuNezxtCQxaTR030YXQSRM6XBx70ZzTl6I4lp6NATL8gSBxA/exec";
+const TIMER_DURATION = 25;
+const LETTERS = ['A','B','C','D'];
+const THEME_CLASSES = ['theme-A','theme-B','theme-C','theme-D','theme-E'];
+
+const questions = [
+  // ---- MOTEUR DIESEL ----
+  { theme: "Moteur diesel – principe", tc:"theme-A", q: "Quel phénomène déclenche la combustion dans un moteur diesel ?", opts: ["Un mélange air/carburant préchauffé avant admission","Une bougie d'allumage électrique","Un capteur de pression qui commande l'injection","L'auto-inflammation par haute température de compression"], correct: 3, expl: "Le diesel est un moteur à allumage par compression. La chaleur générée (~500°C) par le fort taux de compression provoque l'auto-inflammation du carburant — aucune bougie n'est nécessaire." },
+  { theme: "Moteur diesel – principe", tc:"theme-A", q: "Quelle est la plage du rapport volumétrique d'un moteur diesel ?", opts: ["14 à 25:1","8 à 12:1","25 à 35:1","5 à 8:1"], correct: 0, expl: "Le taux de compression diesel est de 14 à 25:1, bien supérieur à l'essence. Cette forte compression génère des températures et pressions suffisantes pour l'auto-inflammation." },
+  { theme: "Moteur diesel – principe", tc:"theme-A", q: "À quoi servent les bougies de préchauffage sur un moteur diesel ?", opts: ["À réguler la pression d'injection","À réchauffer le filtre à gazole en hiver","À faciliter le démarrage à froid en créant un point chaud","À allumer le mélange comme sur un moteur essence"], correct: 2, expl: "Les bougies de préchauffage créent un point chaud dans la chambre pour aider l'auto-inflammation lors des démarrages à froid, quand la compression seule ne suffit pas." },
+  { theme: "Moteur diesel – calcul", tc:"theme-A", q: "Moteur 4 cyl. ∅73mm × course 82mm, chambre 21cm³ — quel est le rapport volumétrique ?", opts: ["Rv ≈ 12","Rv ≈ 25","Rv ≈ 21","Rv ≈ 17"], correct: 3, expl: "Vu = π × 3,65² × 8,2 ≈ 343 cm³. Rv = (343+21)/21 = 364/21 ≈ 17. Cylindrée totale = 4 × 343 = 1372 cm³." },
+
+  // ---- INJECTION INDIRECTE ----
+  { theme: "Injection indirecte", tc:"theme-B", q: "Dans l'injection indirecte, où débouche l'injecteur ?", opts: ["Dans le collecteur d'admission","Directement dans la chambre principale","Après la soupape d'échappement","Dans une préchambre reliée à la chambre principale"], correct: 3, expl: "En injection indirecte, l'injecteur débouche dans une préchambre. La précombustion s'y produit, puis la combustion complète a lieu dans la chambre principale." },
+  { theme: "Injection indirecte", tc:"theme-B", q: "Quel est l'avantage principal de l'injection indirecte pour la mécanique ?", opts: ["Elle supprime le besoin de turbocompresseur","Elle évite des efforts trop violents sur le piston","Elle permet d'injecter à 2000 bars","Elle réduit la consommation de 30%"], correct: 1, expl: "La précombustion dans la préchambre atténue la montée brutale de pression dans le cylindre, réduisant les efforts mécaniques sur le piston et les paliers." },
+  { theme: "Injection indirecte", tc:"theme-B", q: "Quelle pression génère la pompe rotative en injection indirecte ?", opts: ["1500 à 2000 bars","10 à 30 bars","110 à 175 bars","500 à 800 bars"], correct: 2, expl: "La pompe rotative génère 110 à 175 bars, bien inférieur au common rail moderne qui peut dépasser 2000 bars." },
+  { theme: "Injection indirecte", tc:"theme-B", q: "Dans l'injection indirecte, qu'est-ce qui détermine la pression d'ouverture des injecteurs ?", opts: ["La pression de la pompe de transfert","Un capteur de pression rail","Un ressort taré","Un électroaimant commandé par le calculateur"], correct: 2, expl: "Les injecteurs sont entièrement mécaniques en injection indirecte. Un ressort taré à une valeur précise détermine le seuil d'ouverture." },
+
+  // ---- COMBUSTION ----
+  { theme: "Combustion diesel", tc:"theme-C", q: "Qu'est-ce que le 'cognement' dans un moteur diesel ?", opts: ["Le bruit des soupapes","Le choc du piston sur la culasse","Le bruit du turbocompresseur en surpression","La décomposition brutale des peroxydes lors de la combustion"], correct: 3, expl: "Le cognement est dû à la décomposition explosive des peroxydes formés lors de l'oxydation du carburant. Cette réaction brutale provoque une montée soudaine de pression et un bruit caractéristique." },
+  { theme: "Combustion diesel", tc:"theme-C", q: "Quelle phase correspond à la 'combustion contrôlée et progressive' ?", opts: ["D→E : Postcombustion","A'→A : Délai d'injection","C→D : Combustion principale","A→B : Délai d'inflammation"], correct: 2, expl: "La phase C→D est la combustion principale : progressive et contrôlée. Le cracking diminue la vitesse de combustion. C'est lors de cette phase que le cognement cesse." },
+  { theme: "Combustion diesel", tc:"theme-C", q: "Lors de la postcombustion (D→E), qu'est-ce qui défavorise la combustion ?", opts: ["Raréfaction de l'O₂, volume croissant et molécules difficiles à brûler","Vitesse de rotation trop élevée","Température trop basse et injecteur fermé trop tôt","Excès d'oxygène et pression trop haute"], correct: 0, expl: "Après fermeture de l'injecteur : l'oxygène se raréfie, le piston descend (volume croissant → pression et température en baisse), et les HC issus du cracking sont difficiles à brûler." },
+  { theme: "Combustion diesel", tc:"theme-C", q: "Lors de l'oxydation du carburant diesel, quels composés se forment en premier ?", opts: ["Des hydrocarbures imbrûlés","Des peroxydes","Du monoxyde de carbone","Des particules de suie"], correct: 1, expl: "Les gouttelettes de carburant s'oxydent au contact de l'oxygène de l'air pour former des peroxydes, composés oxygénés instables dont la décomposition brutale provoque le cognement." },
+
+  // ---- COMMON RAIL ----
+  { theme: "Common rail – avantages", tc:"theme-D", q: "Quel est le premier avantage du common rail ?", opts: ["L'absence de retour carburant","La suppression de la pompe basse pression","La suppression du filtre à carburant","Une pression très élevée permettant une pulvérisation très fine"], correct: 3, expl: "Le common rail permet des pressions de 250 à 2000 bars selon les constructeurs. Cette haute pression génère des gouttelettes très fines, améliorant le brassage avec l'air et la combustion." },
+  { theme: "Common rail – avantages", tc:"theme-D", q: "Quelle est la particularité du common rail concernant la pression carburant ?", opts: ["Elle augmente avec le régime moteur","Elle ne dépend plus du régime moteur","Elle est fixe à 1350 bars","Elle diminue à haut régime"], correct: 1, expl: "C'est un avantage majeur du common rail : la pression dans la rampe est indépendante du régime moteur. Elle est régulée électroniquement en permanence selon les besoins." },
+  { theme: "Common rail – injections", tc:"theme-D", q: "Quel est le rôle de l'injection pilote (pré-injection) ?", opts: ["Régénérer le FAP à chaque cycle","Remplacer l'injection principale en cas de panne","Injecter toute la quantité de carburant d'un coup","Amorcer doucement la combustion pour réduire le bruit et les fumées"], correct: 3, expl: "L'injection pilote représente 1 à 2 mm³ du débit principal. En amorçant doucement la combustion, elle évite l'inflammation brutale, réduisant le claquement moteur et les fumées à froid." },
+  { theme: "Common rail – injections", tc:"theme-D", q: "Quel est le rôle principal de la post-injection ?", opts: ["Limiter les polluants et permettre la régénération du FAP","Refroidir les injecteurs","Augmenter la puissance en fin de cycle","Compenser l'absence d'injection pilote"], correct: 0, expl: "La post-injection ne contribue pas à la puissance. Elle active le catalyseur, réduit les NOx et déclenche les phases de régénération du Filtre à Particules (FAP/DPF)." },
+  { theme: "Common rail – injections", tc:"theme-D", q: "Jusqu'à combien d'injections par cycle peut effectuer un common rail de 3ème génération ?", opts: ["3 injections","5 injections","8 injections","12 injections"], correct: 2, expl: "La 3ème génération de common rail peut effectuer jusqu'à 8 injections par cycle, permettant une gestion très fine de la combustion pour réduire bruit, consommation et polluants." },
+
+  // ---- POMPE BASSE PRESSION ----
+  { theme: "Pompe basse pression", tc:"theme-A", q: "Quel est le rôle du clapet antiretour intégré à la pompe basse pression ?", opts: ["Filtrer les impuretés avant la pompe HP","Limiter la pression à 4 bars","Empêcher le carburant de revenir sous haute pression","Maintenir une pression résiduelle pour éviter de réamorcer le circuit"], correct: 3, expl: "Le clapet antiretour maintient une pression résiduelle dans le circuit à l'arrêt moteur. Sans lui, le circuit se viderait et nécessiterait un long réamorçage au prochain démarrage." },
+  { theme: "Pompe basse pression", tc:"theme-A", q: "Comment est commandée la pompe à carburant basse pression ?", opts: ["Par courroie de distribution","En tout ou rien via un relais de puissance","Par signal PWM du calculateur","Manuellement par l'utilisateur"], correct: 1, expl: "La pompe à carburant est équipée d'un moteur à courant continu commandé en tout ou rien par un relais de puissance. Sa vitesse est définie par sa résistance interne." },
+
+  // ---- FILTRE ----
+  { theme: "Filtre à carburant", tc:"theme-B", q: "Quel est le seuil de filtration du filtre à carburant common rail ?", opts: ["20 microns","50 microns","0,5 micron","5 microns"], correct: 3, expl: "Le filtre common rail filtre à environ 5 microns pour protéger la pompe HP et les injecteurs dont les tolérances de fabrication sont extrêmement faibles." },
+  { theme: "Filtre à carburant", tc:"theme-B", q: "À partir de quelle différence de pression considère-t-on le filtre comme colmaté ?", opts: ["3 bars","0,2 bar","1 bar","0,5 bar"], correct: 2, expl: "Un filtre est colmaté quand la différence de pression entre son entrée et sa sortie dépasse 1 bar, ce qui traduit une résistance excessive au passage du carburant." },
+
+  // ---- THERMOSTATIQUE ----
+  { theme: "Élément thermostatique", tc:"theme-C", q: "Que fait l'élément thermostatique quand la température carburant est < 15°C ?", opts: ["Il ouvre directement le passage vers le filtre","Il ferme complètement le circuit HP","Il active une résistance électrique de préchauffage","Il dévie le carburant vers le réchauffeur eau moteur"], correct: 3, expl: "Sous 15°C, le bilame est décollé de son siège : le passage direct vers le filtre est fermé, le carburant est réchauffé via le boîtier eau moteur pour éviter la cristallisation des paraffines." },
+  { theme: "Élément thermostatique", tc:"theme-C", q: "Que se passe-t-il quand la température carburant dépasse 25°C ?", opts: ["Le thermostat coupe le circuit haute pression","Le carburant passe directement vers l'élément filtrant sans réchauffage","Le réchauffeur s'active à pleine puissance","Le clapet antiretour se ferme"], correct: 1, expl: "Au-dessus de 25°C, l'élément thermostatique (bilame) est en appui sur son siège. Le passage vers le réchauffeur est fermé et le carburant file directement vers l'élément filtrant." },
+
+  // ---- POMPE HAUTE PRESSION ----
+  { theme: "Pompe haute pression", tc:"theme-D", q: "Quel est le rôle de la pompe haute pression dans un système common rail ?", opts: ["Commander l'ouverture des injecteurs","Aspirer le carburant du réservoir vers le filtre","Réguler la pression par retour réservoir","Comprimer le carburant et alimenter les injecteurs via la rampe HP"], correct: 3, expl: "La pompe HP transfère le carburant du circuit basse pression vers le circuit haute pression (200 à 2000 bars). Elle alimente la rampe commune depuis laquelle partent les injecteurs." },
+  { theme: "Pompe haute pression", tc:"theme-D", q: "Quel est le rôle du désactivateur du 3ème piston de la pompe HP ?", opts: ["Augmenter la pression en forte charge","Régénérer le FAP en augmentant le débit","Synchroniser la pompe avec la distribution","Réduire la puissance absorbée en faible charge et limiter la pression en cas d'incident"], correct: 3, expl: "En faible charge, 3 pistons seraient inutiles et consommeraient de l'énergie. Le désactivateur permet de fonctionner sur 2 pistons, réduisant la puissance absorbée et l'échauffement du carburant." },
+  { theme: "Pompe haute pression", tc:"theme-D", q: "À quelle pression la pompe HP CP1 à 3 pistons atteint-elle 200 bars au démarrage ?", opts: ["Après 5 tours moteur","Après 1,5 tour moteur","Immédiatement","Après 10 tours moteur"], correct: 1, expl: "Au démarrage, la pompe haute pression CP1 à 3 pistons atteint 200 bars après seulement 1,5 tour moteur, ce qui assure un démarrage rapide." },
+
+  // ---- CAPTEUR HAUTE PRESSION ----
+  { theme: "Capteur haute pression", tc:"theme-E", q: "Quel est le rôle du capteur de pression rail (capteur HP) ?", opts: ["Commander directement les injecteurs","Mesurer la pression dans la rampe et envoyer l'info au calculateur","Réguler le débit de la pompe basse pression","Déclencher la régénération du FAP"], correct: 1, expl: "Le capteur HP mesure en permanence la pression dans la rampe commune et envoie cette information au calculateur. Celui-ci peut ainsi réguler la pression en agissant sur la pompe HP et le régulateur." },
+  { theme: "Capteur haute pression", tc:"theme-E", q: "Quelle est la plage de pression mesurée par le capteur HP sur un common rail moderne ?", opts: ["0 à 50 bars","0 à 500 bars","0 à 2000 bars","0 à 175 bars"], correct: 2, expl: "Le capteur HP peut mesurer des pressions allant de 0 à 2000 bars selon les systèmes. Cette plage large permet de couvrir toutes les situations de fonctionnement du moteur." },
+  { theme: "Capteur haute pression", tc:"theme-E", q: "Que provoque une panne du capteur de pression rail ?", opts: ["Le moteur tourne en mode dégradé avec pression fixe ou ne démarre pas","Uniquement une surconsommation légère","Le déclenchement immédiat de la régénération FAP","Une pression d'injection trop élevée en permanence"], correct: 0, expl: "Sans information de pression, le calculateur ne peut plus réguler correctement. Selon le système, le moteur tourne en mode dégradé avec une pression fixe limitée, ou ne démarre tout simplement pas." },
+  { theme: "Capteur haute pression", tc:"theme-E", q: "Le capteur HP est un capteur de type :", opts: ["Inductif","Piézoélectrique résistif (jauge de contrainte)","Optique","Capacitif"], correct: 1, expl: "Le capteur de pression rail est de type piézoélectrique résistif (jauge de contrainte). La déformation d'un élément piézorésistif sous l'effet de la pression génère une variation de tension envoyée au calculateur." }
+];
+
+let current = 0, score = 0, answered = false, userAnswers = [];
+let shuffled = [], timerInterval = null, timeLeft = TIMER_DURATION;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length-1; i>0; i--) { const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+
+function checkPrenom() {
+  const v = document.getElementById('prenom').value.trim();
+  document.getElementById('btn-start').disabled = v.length < 2;
+}
+
+function startQuiz() {
+  shuffled = shuffle(questions);
+  current = 0; score = 0; userAnswers = [];
+  show('screen-quiz');
+  renderQ();
+}
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  timeLeft = TIMER_DURATION;
+  updateTimerDisplay();
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateTimerDisplay();
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      if (!answered) timeUp();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const el = document.getElementById('timer-circle');
+  el.textContent = timeLeft;
+  el.className = 'timer-circle';
+  if (timeLeft <= 5) el.classList.add('danger');
+  else if (timeLeft <= 10) el.classList.add('warning');
+}
+
+function timeUp() {
+  answered = true;
+  const q = shuffled[current];
+  userAnswers.push({ theme: q.theme, correct: false, q: q.q });
+  document.querySelectorAll('.opt').forEach((b, i) => {
+    b.disabled = true;
+    if (i === q.correct) b.classList.add('correct');
+  });
+  const fb = document.getElementById('feedback');
+  fb.style.display = 'block'; fb.className = 'feedback wrong';
+  document.getElementById('fb-title').textContent = '⏱ Temps écoulé !';
+  document.getElementById('fb-text').textContent = q.expl;
+  const nb = document.getElementById('next-btn');
+  nb.style.display = 'block';
+  nb.textContent = current < shuffled.length-1 ? 'Question suivante →' : 'Voir mon résultat';
+  nb.onclick = () => { current++; current < shuffled.length ? renderQ() : showResults(); };
+}
+
+function renderQ() {
+  const q = shuffled[current];
+  answered = false;
+  document.getElementById('q-num').textContent = `Question ${current+1} / ${shuffled.length}`;
+  document.getElementById('q-score').textContent = `Score : ${score}`;
+  document.getElementById('progress-fill').style.width = `${(current/shuffled.length)*100}%`;
+  const themeEl = document.getElementById('q-theme');
+  themeEl.textContent = q.theme;
+  themeEl.className = 'theme-tag ' + q.tc;
+  document.getElementById('q-text').textContent = q.q;
+  const fb = document.getElementById('feedback');
+  fb.style.display = 'none'; fb.className = 'feedback';
+  document.getElementById('next-btn').style.display = 'none';
+  const opts = document.getElementById('q-options');
+  opts.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.innerHTML = `<span class="opt-letter">${LETTERS[i]}</span><span>${opt}</span>`;
+    btn.onclick = () => answer(i);
+    opts.appendChild(btn);
+  });
+  startTimer();
+}
+
+function answer(idx) {
+  if (answered) return;
+  answered = true;
+  clearInterval(timerInterval);
+  const q = shuffled[current];
+  const ok = idx === q.correct;
+  if (ok) score++;
+  userAnswers.push({ theme: q.theme, correct: ok, q: q.q });
+  document.querySelectorAll('.opt').forEach((b, i) => {
+    b.disabled = true;
+    if (i === q.correct) b.classList.add('correct');
+    else if (i === idx && !ok) b.classList.add('wrong');
+  });
+  const fb = document.getElementById('feedback');
+  fb.style.display = 'block';
+  fb.className = 'feedback ' + (ok ? 'correct' : 'wrong');
+  document.getElementById('fb-title').textContent = ok ? '✓ Bonne réponse !' : '✗ Pas tout à fait…';
+  document.getElementById('fb-text').textContent = q.expl;
+  const nb = document.getElementById('next-btn');
+  nb.style.display = 'block';
+  nb.textContent = current < shuffled.length-1 ? 'Question suivante →' : 'Voir mon résultat';
+  nb.onclick = () => { current++; current < shuffled.length ? renderQ() : showResults(); };
+}
+
+function showResults() {
+  clearInterval(timerInterval);
+  show('screen-results');
+  const pct = Math.round((score/shuffled.length)*100);
+  document.getElementById('res-score').textContent = `${score} / ${shuffled.length}`;
+  document.getElementById('res-pct').textContent = `soit ${pct}% de bonnes réponses`;
+  let icon, mention, cls;
+  if (pct >= 80) { icon='🏆'; mention='Excellent – Maîtrise acquise'; cls='excellent'; }
+  else if (pct >= 60) { icon='👍'; mention='Bien – Quelques points à revoir'; cls='bien'; }
+  else if (pct >= 40) { icon='📖'; mention='Passable – Revoir le cours'; cls='passable'; }
+  else { icon='⚠️'; mention='Insuffisant – Cours à relire attentivement'; cls='insuffisant'; }
+  document.getElementById('res-icon').textContent = icon;
+  const m = document.getElementById('res-mention');
+  m.textContent = mention; m.className = `mention ${cls}`;
+
+  const recap = document.getElementById('recap-list');
+  recap.innerHTML = '';
+  document.getElementById('recap-title').style.display = 'block';
+  userAnswers.forEach((a, i) => {
+    const el = document.createElement('div');
+    el.className = 'recap-item';
+    el.innerHTML = `<span class="dot ${a.correct?'ok':'ko'}"></span><span><strong>Q${i+1}</strong> — ${a.theme} : ${a.correct ? 'Correct ✓' : 'Incorrect ✗'}</span>`;
+    recap.appendChild(el);
+  });
+
+  const erreurs = userAnswers.filter(a => !a.correct);
+  if (erreurs.length > 0) {
+    document.getElementById('erreurs-card').style.display = 'block';
+    document.getElementById('nb-erreurs').textContent = `${erreurs.length} erreur${erreurs.length>1?'s':''} sur ${shuffled.length} questions`;
+    const errList = document.getElementById('erreurs-list');
+    errList.innerHTML = '';
+    userAnswers.forEach((a, i) => {
+      if (a.correct) return;
+      const q = shuffled[i];
+      const bonneReponse = q.opts[q.correct];
+      const div = document.createElement('div');
+      div.className = 'erreur-item';
+      div.innerHTML = `
+        <div class="erreur-theme">${q.theme}</div>
+        <div class="erreur-q">Q${i+1}. ${q.q}</div>
+        <div class="erreur-bonne">✓ Bonne réponse : ${bonneReponse}</div>
+        <div class="erreur-expl">💡 ${q.expl}</div>`;
+      errList.appendChild(div);
+    });
+  }
+
+  sendToSheets(pct);
+}
+
+function telechargerPDF() {
+  const prenom = document.getElementById('prenom').value.trim();
+  const pct = Math.round((score/shuffled.length)*100);
+  const erreurs = userAnswers.filter(a => !a.correct);
+  const date = new Date().toLocaleDateString('fr-FR');
+
+  let html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 700px; margin: 40px auto; color: #1E293B; }
+    h1 { color: #2563EB; font-size: 22px; margin-bottom: 4px; }
+    .meta { font-size: 13px; color: #94A3B8; margin-bottom: 24px; }
+    .score-box { background: #EFF6FF; border: 2px solid #BFDBFE; border-radius: 10px; padding: 16px 20px; margin-bottom: 28px; display: flex; align-items: center; gap: 20px; }
+    .score-num { font-size: 36px; font-weight: 700; color: #2563EB; }
+    .score-label { font-size: 14px; color: #475569; }
+    h2 { color: #DC2626; font-size: 16px; border-bottom: 2px solid #FECACA; padding-bottom: 6px; margin-bottom: 16px; }
+    .erreur { border: 1.5px solid #FECACA; border-radius: 8px; padding: 14px 16px; margin-bottom: 14px; background: #FEF2F2; }
+    .theme { font-size: 11px; font-weight: 700; color: #DC2626; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+    .question { font-size: 14px; font-weight: 700; color: #0F172A; margin-bottom: 8px; }
+    .bonne { font-size: 13px; color: #16A34A; font-weight: 700; margin-bottom: 6px; }
+    .expl { font-size: 13px; color: #475569; border-top: 1px solid #FECACA; padding-top: 8px; line-height: 1.6; }
+    .footer { margin-top: 30px; font-size: 11px; color: #94A3B8; text-align: center; }
+  </style></head><body>
+  <h1>Fiche de révision – Injection Diesel</h1>
+  <div class="meta">BTS MVVP · ${prenom} · ${date}</div>
+  <div class="score-box">
+    <div class="score-num">${score}/${shuffled.length}</div>
+    <div class="score-label">Score final<br><strong>${pct}%</strong> de bonnes réponses<br>${erreurs.length} erreur${erreurs.length>1?'s':''} à retravailler</div>
+  </div>
+  <h2>Mes erreurs à retravailler</h2>`;
+
+  userAnswers.forEach((a, i) => {
+    if (a.correct) return;
+    const q = shuffled[i];
+    html += `<div class="erreur">
+      <div class="theme">${q.theme}</div>
+      <div class="question">Q${i+1}. ${q.q}</div>
+      <div class="bonne">✓ Bonne réponse : ${q.opts[q.correct]}</div>
+      <div class="expl">💡 ${q.expl}</div>
+    </div>`;
+  });
+
+  html += `<div class="footer">BTS MVVP – Quiz formatif Injection Diesel</div></body></html>`;
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `fiche_revision_${prenom.replace(/ /g,'_')}_injection_diesel.html`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function sendToSheets(pct) {
+  if (APPS_SCRIPT_URL === "COLLEZ_ICI_VOTRE_URL_APPS_SCRIPT") {
+    document.getElementById('sending-msg').textContent = "⚠️ URL Apps Script non configurée.";
+    return;
+  }
+  const prenom = document.getElementById('prenom').value.trim();
+  const now = new Date().toLocaleString('fr-FR');
+  const detail = userAnswers.map((a,i) => `Q${i+1}:${a.correct?'✓':'✗'}`).join(' | ');
+  const payload = { prenom, date: now, score: `${score}/${shuffled.length}`, pourcentage: `${pct}%`, detail };
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST', mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).then(() => {
+    document.getElementById('sending-msg').textContent = "✅ Résultats envoyés à votre formateur.";
+  }).catch(() => {
+    document.getElementById('sending-msg').textContent = "❌ Erreur d'envoi — vérifiez la connexion.";
+  });
+}
+
+function restart() {
+  document.getElementById('prenom').value = '';
+  document.getElementById('btn-start').disabled = true;
+  show('screen-accueil');
+}
+</script>
+</body>
+</html>
