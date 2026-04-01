@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz – Injection Diesel | BTS MAVA</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #2563EB;
+    --blue-light: #EFF6FF;
+    --blue-mid: #BFDBFE;
+    --green: #16A34A;
+    --green-light: #F0FDF4;
+    --green-mid: #BBF7D0;
+    --red: #DC2626;
+    --red-light: #FEF2F2;
+    --red-mid: #FECACA;
+    --orange: #EA580C;
+    --orange-light: #FFF7ED;
+    --gray-50: #F8FAFC;
+    --gray-100: #F1F5F9;
+    --gray-200: #E2E8F0;
+    --gray-400: #94A3B8;
+    --gray-600: #475569;
+    --gray-800: #1E293B;
+    --gray-900: #0F172A;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-800);
+    min-height: 100vh;
+    padding: 1rem;
+  }
+  .container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding-bottom: 3rem;
+  }
+  .header {
+    text-align: center;
+    padding: 2rem 0 1.5rem;
+  }
+  .header .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--blue-light);
+    color: var(--blue);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 99px;
+    margin-bottom: 1rem;
+  }
+  .header h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--gray-900);
+    line-height: 1.3;
+    margin-bottom: 0.4rem;
+  }
+  .header p {
+    font-size: 14px;
+    color: var(--gray-600);
+  }
+
+  /* ---- ÉCRAN ACCUEIL ---- */
+  .card {
+    background: #fff;
+    border-radius: var(--radius);
+    border: 1px solid var(--gray-200);
+    padding: 1.75rem;
+    margin-bottom: 1rem;
+  }
+  .card label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray-600);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .card input[type="text"] {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    color: var(--gray-800);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .card input[type="text"]:focus { border-color: var(--blue); }
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 1.25rem;
+  }
+  .info-item {
+    background: var(--gray-50);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    border: 1px solid var(--gray-200);
+  }
+  .info-item .val { font-size: 20px; font-weight: 600; color: var(--gray-900); }
+  .info-item .lbl { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+
+  /* ---- BOUTONS ---- */
+  .btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .btn-primary {
+    background: var(--blue);
+    color: #fff;
+  }
+  .btn-primary:hover { background: #1D4ED8; }
+  .btn-primary:disabled { background: var(--gray-200); color: var(--gray-400); cursor: not-allowed; }
+  .btn-outline {
+    background: transparent;
+    color: var(--blue);
+    border: 1.5px solid var(--blue);
+    margin-top: 10px;
+  }
+  .btn-outline:hover { background: var(--blue-light); }
+
+  /* ---- QUIZ ---- */
+  .progress-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: var(--gray-600);
+    font-weight: 500;
+  }
+  .progress-track {
+    height: 5px;
+    background: var(--gray-200);
+    border-radius: 99px;
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--blue);
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+  .theme-tag {
+    display: inline-block;
+    background: var(--blue-light);
+    color: var(--blue);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 4px 10px;
+    border-radius: 99px;
+    margin-bottom: 1rem;
+  }
+  .question {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--gray-900);
+    line-height: 1.5;
+    margin-bottom: 1.25rem;
+  }
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .opt {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 15px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--gray-200);
+    background: #fff;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--gray-800);
+    text-align: left;
+    transition: border-color 0.15s, background 0.15s;
+    width: 100%;
+  }
+  .opt:hover:not(:disabled) { border-color: var(--blue); background: var(--blue-light); }
+  .opt:disabled { cursor: default; }
+  .opt.correct { border-color: var(--green); background: var(--green-light); color: #14532D; }
+  .opt.wrong   { border-color: var(--red);   background: var(--red-light);   color: #7F1D1D; }
+  .opt-letter {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--gray-100);
+    color: var(--gray-600);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'DM Mono', monospace;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .opt.correct .opt-letter { background: var(--green); color: #fff; }
+  .opt.wrong   .opt-letter { background: var(--red);   color: #fff; }
+
+  /* ---- FEEDBACK ---- */
+  .feedback {
+    margin-top: 1rem;
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    display: none;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .feedback.correct { background: var(--green-light); border: 1px solid var(--green-mid); color: #14532D; }
+  .feedback.wrong   { background: var(--red-light);   border: 1px solid var(--red-mid);   color: #7F1D1D; }
+  .feedback strong  { display: block; font-size: 15px; margin-bottom: 4px; }
+  .next-btn {
+    margin-top: 1rem;
+    display: none;
+  }
+
+  /* ---- RÉSULTATS ---- */
+  .result-hero {
+    text-align: center;
+    padding: 2rem 1rem 1.5rem;
+  }
+  .result-hero .icon { font-size: 48px; margin-bottom: 0.75rem; }
+  .result-hero h2 { font-size: 22px; font-weight: 600; color: var(--gray-900); margin-bottom: 0.5rem; }
+  .score-display {
+    font-size: 56px;
+    font-weight: 600;
+    font-family: 'DM Mono', monospace;
+    color: var(--blue);
+    margin: 0.5rem 0;
+  }
+  .mention {
+    display: inline-block;
+    padding: 5px 16px;
+    border-radius: 99px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+  }
+  .mention.excellent { background: var(--green-light); color: var(--green); }
+  .mention.bien      { background: var(--blue-light);  color: var(--blue); }
+  .mention.passable  { background: var(--orange-light); color: var(--orange); }
+  .mention.insuffisant { background: var(--red-light); color: var(--red); }
+
+  .recap-list { display: flex; flex-direction: column; gap: 8px; margin-top: 0.5rem; }
+  .recap-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--gray-600);
+    line-height: 1.5;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+  .dot.ok { background: var(--green); }
+  .dot.ko { background: var(--red); }
+
+  .sending-msg {
+    text-align: center;
+    font-size: 13px;
+    color: var(--gray-400);
+    padding: 0.75rem;
+  }
+
+  /* ---- HIDDEN ---- */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  @media (max-width: 480px) {
+    .question { font-size: 16px; }
+    .opt { font-size: 14px; padding: 11px 12px; }
+    .score-display { font-size: 44px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="badge">⚙ BTS MAVA – Injection Diesel</div>
+    <h1>Quiz Formatif</h1>
+    <p>Correction immédiate après chaque réponse</p>
+  </div>
+
+  <!-- ÉCRAN 1 : ACCUEIL -->
+  <div id="screen-accueil" class="screen active">
+    <div class="card">
+      <label for="prenom">Ton prénom et nom</label>
+      <input type="text" id="prenom" placeholder="Ex : Lucas Martin" oninput="checkPrenom()" />
+      <div class="info-grid">
+        <div class="info-item"><div class="val">20</div><div class="lbl">Questions</div></div>
+        <div class="info-item"><div class="val">~10 min</div><div class="lbl">Durée estimée</div></div>
+      </div>
+    </div>
+    <button class="btn btn-primary" id="btn-start" disabled onclick="startQuiz()">Commencer le quiz →</button>
+  </div>
+
+  <!-- ÉCRAN 2 : QUIZ -->
+  <div id="screen-quiz" class="screen">
+    <div class="progress-row">
+      <span id="q-num">Question 1 / 20</span>
+      <span id="q-score">Score : 0</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <div class="card">
+      <div class="theme-tag" id="q-theme"></div>
+      <div class="question" id="q-text"></div>
+      <div class="options" id="q-options"></div>
+      <div class="feedback" id="feedback">
+        <strong id="fb-title"></strong>
+        <span id="fb-text"></span>
+      </div>
+      <button class="btn btn-primary next-btn" id="next-btn"></button>
+    </div>
+  </div>
+
+  <!-- ÉCRAN 3 : RÉSULTATS -->
+  <div id="screen-results" class="screen">
+    <div class="card">
+      <div class="result-hero">
+        <div class="icon" id="res-icon"></div>
+        <h2>Quiz terminé !</h2>
+        <div class="score-display" id="res-score"></div>
+        <div style="font-size:14px;color:var(--gray-400);margin-bottom:0.75rem" id="res-pct"></div>
+        <div class="mention" id="res-mention"></div>
+      </div>
+      <div class="sending-msg" id="sending-msg">Envoi des résultats en cours…</div>
+      <div id="recap-title" style="font-size:13px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;display:none">Détail par question</div>
+      <div class="recap-list" id="recap-list"></div>
+    </div>
+    <button class="btn btn-outline" onclick="restart()">↺ Recommencer</button>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+//  REMPLACEZ CETTE URL PAR VOTRE URL APPS SCRIPT (étape 2)
+// ============================================================
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw7357V66VDFUUv6Djx5KXuNezxtCQxaTR030YXQSRM6XBx70ZzTl6I4lp6NATL8gSBxA/exec";
+// ============================================================
+
+const questions = [
+  { theme: "Moteur diesel – principe", q: "Quel phénomène déclenche la combustion dans un moteur diesel ?", opts: ["Une bougie d'allumage électrique", "L'auto-inflammation par haute température de compression", "Un capteur de pression qui commande l'injection", "Un mélange air/carburant préchauffé avant admission"], correct: 1, expl: "Le diesel est un moteur à allumage par compression. La chaleur générée (~500°C) par le fort taux de compression provoque l'auto-inflammation du carburant — aucune bougie n'est nécessaire." },
+  { theme: "Moteur diesel – principe", q: "Quelle est la plage du rapport volumétrique d'un moteur diesel ?", opts: ["8 à 12:1", "14 à 25:1", "25 à 35:1", "5 à 8:1"], correct: 1, expl: "Le taux de compression diesel est de 14 à 25:1, bien supérieur à l'essence. Cette forte compression génère des températures et pressions suffisantes pour l'auto-inflammation." },
+  { theme: "Moteur diesel – principe", q: "À quoi servent les bougies de préchauffage sur un moteur diesel ?", opts: ["À allumer le mélange comme sur un moteur essence", "À faciliter le démarrage à froid en créant un point chaud", "À réguler la pression d'injection", "À réchauffer le filtre à gazole en hiver"], correct: 1, expl: "Les bougies de préchauffage créent un point chaud dans la chambre pour aider l'auto-inflammation lors des démarrages à froid, quand la compression seule ne suffit pas." },
+  { theme: "Moteur diesel – calcul", q: "Moteur 4 cyl. ∅73mm × course 82mm, chambre 21cm³ — quel est le rapport volumétrique ?", opts: ["Rv ≈ 12", "Rv ≈ 17", "Rv ≈ 21", "Rv ≈ 25"], correct: 1, expl: "Vu = π × 3,65² × 8,2 ≈ 343 cm³. Rv = (343+21)/21 = 364/21 ≈ 17. Cylindrée totale = 4 × 343 = 1372 cm³." },
+  { theme: "Injection indirecte", q: "Dans l'injection indirecte, où débouche l'injecteur ?", opts: ["Directement dans la chambre principale", "Dans une préchambre reliée à la chambre principale", "Après la soupape d'échappement", "Dans le collecteur d'admission"], correct: 1, expl: "En injection indirecte, l'injecteur débouche dans une préchambre. La précombustion s'y produit, puis la combustion complète a lieu dans la chambre principale." },
+  { theme: "Injection indirecte", q: "Quel est l'avantage principal de l'injection indirecte pour la mécanique ?", opts: ["Elle permet d'injecter à 2000 bars", "Elle évite des efforts trop violents sur le piston", "Elle supprime le besoin de turbocompresseur", "Elle réduit la consommation de 30%"], correct: 1, expl: "La précombustion dans la préchambre atténue la montée brutale de pression dans le cylindre, réduisant les efforts mécaniques sur le piston et les paliers." },
+  { theme: "Injection indirecte", q: "Quelle pression génère la pompe rotative en injection indirecte ?", opts: ["10 à 30 bars", "110 à 175 bars", "500 à 800 bars", "1500 à 2000 bars"], correct: 1, expl: "La pompe rotative génère 110 à 175 bars, bien inférieur au common rail moderne qui peut dépasser 2000 bars." },
+  { theme: "Injection indirecte", q: "Dans l'injection indirecte, qu'est-ce qui détermine la pression d'ouverture des injecteurs ?", opts: ["Un électroaimant commandé par le calculateur", "Un ressort taré", "La pression de la pompe de transfert", "Un capteur de pression rail"], correct: 1, expl: "Les injecteurs sont entièrement mécaniques en injection indirecte. Un ressort taré à une valeur précise détermine le seuil d'ouverture." },
+  { theme: "Combustion diesel", q: "Qu'est-ce que le 'cognement' dans un moteur diesel ?", opts: ["Le bruit des soupapes", "La décomposition brutale des peroxydes lors de la combustion", "Le choc du piston sur la culasse", "Le bruit du turbocompresseur en surpression"], correct: 1, expl: "Le cognement est dû à la décomposition explosive des peroxydes formés lors de l'oxydation du carburant. Cette réaction brutale provoque une montée soudaine de pression et un bruit caractéristique." },
+  { theme: "Combustion diesel", q: "Quelle phase correspond à la 'combustion contrôlée et progressive' ?", opts: ["A'→A : Délai d'injection", "A→B : Délai d'inflammation", "C→D : Combustion principale", "D→E : Postcombustion"], correct: 2, expl: "La phase C→D est la combustion principale : progressive et contrôlée. Le cracking diminue la vitesse de combustion. C'est lors de cette phase que le cognement cesse." },
+  { theme: "Combustion diesel", q: "Lors de la postcombustion (D→E), qu'est-ce qui défavorise la combustion ?", opts: ["Excès d'oxygène et pression trop haute", "Raréfaction de l'O₂, volume croissant et molécules difficiles à brûler", "Température trop basse et injecteur fermé trop tôt", "Vitesse de rotation trop élevée"], correct: 1, expl: "Après fermeture de l'injecteur : l'oxygène se raréfie, le piston descend (volume croissant → pression et température en baisse), et les HC issus du cracking sont difficiles à brûler." },
+  { theme: "Common rail – avantages", q: "Quel est le premier avantage du common rail ?", opts: ["La suppression du filtre à carburant", "Une pression très élevée permettant une pulvérisation très fine", "L'absence de retour carburant", "La suppression de la pompe basse pression"], correct: 1, expl: "Le common rail permet des pressions de 250 à 2000 bars selon les constructeurs. Cette haute pression génère des gouttelettes très fines, améliorant le brassage avec l'air et la combustion." },
+  { theme: "Common rail – injections", q: "Quel est le rôle de l'injection pilote (pré-injection) ?", opts: ["Injecter toute la quantité de carburant d'un coup", "Amorcer doucement la combustion pour réduire le bruit et les fumées", "Remplacer l'injection principale en cas de panne", "Régénérer le FAP à chaque cycle"], correct: 1, expl: "L'injection pilote représente 1 à 2 mm³ du débit principal. En amorçant doucement la combustion, elle évite l'inflammation brutale, réduisant le claquement moteur et les fumées à froid." },
+  { theme: "Common rail – injections", q: "Quel est le rôle principal de la post-injection ?", opts: ["Augmenter la puissance en fin de cycle", "Limiter les polluants et permettre la régénération du FAP", "Compenser l'absence d'injection pilote", "Refroidir les injecteurs"], correct: 1, expl: "La post-injection ne contribue pas à la puissance. Elle active le catalyseur, réduit les NOx et déclenche les phases de régénération du Filtre à Particules (FAP/DPF)." },
+  { theme: "Pompe basse pression", q: "Quel est le rôle du clapet antiretour intégré à la pompe basse pression ?", opts: ["Limiter la pression à 4 bars", "Maintenir une pression résiduelle pour éviter de réamorcer le circuit", "Empêcher le carburant de revenir sous haute pression", "Filtrer les impuretés avant la pompe HP"], correct: 1, expl: "Le clapet antiretour maintient une pression résiduelle dans le circuit à l'arrêt moteur. Sans lui, le circuit se viderait et nécessiterait un long réamorçage au prochain démarrage." },
+  { theme: "Filtre à carburant", q: "Quel est le seuil de filtration du filtre à carburant common rail ?", opts: ["0,5 micron", "5 microns", "20 microns", "50 microns"], correct: 1, expl: "Le filtre common rail filtre à environ 5 microns pour protéger la pompe HP et les injecteurs dont les tolérances de fabrication sont extrêmement faibles." },
+  { theme: "Filtre à carburant", q: "À partir de quelle différence de pression considère-t-on le filtre comme colmaté ?", opts: ["0,2 bar", "0,5 bar", "1 bar", "3 bars"], correct: 2, expl: "Un filtre est colmaté quand la différence de pression entre son entrée et sa sortie dépasse 1 bar, ce qui traduit une résistance excessive au passage du carburant." },
+  { theme: "Élément thermostatique", q: "Que fait l'élément thermostatique quand la température carburant est < 15°C ?", opts: ["Il ferme complètement le circuit HP", "Il dévie le carburant vers le réchauffeur eau moteur", "Il ouvre directement le passage vers le filtre", "Il active une résistance électrique de préchauffage"], correct: 1, expl: "Sous 15°C, le bilame est décollé de son siège : le passage direct vers le filtre est fermé, le carburant est réchauffé via le boîtier eau moteur pour éviter la cristallisation des paraffines." },
+  { theme: "Pompe haute pression", q: "Quel est le rôle de la pompe haute pression dans un système common rail ?", opts: ["Aspirer le carburant du réservoir vers le filtre", "Comprimer le carburant et alimenter les injecteurs via la rampe HP", "Réguler la pression par retour réservoir", "Commander l'ouverture des injecteurs"], correct: 1, expl: "La pompe HP transfère le carburant du circuit basse pression vers le circuit haute pression (200 à 2000 bars). Elle alimente la rampe commune depuis laquelle partent les injecteurs." },
+  { theme: "Pompe haute pression", q: "Quel est le rôle du désactivateur du 3ème piston de la pompe HP ?", opts: ["Augmenter la pression en forte charge", "Réduire la puissance absorbée en faible charge et limiter la pression en cas d'incident", "Régénérer le FAP en augmentant le débit", "Synchroniser la pompe avec la distribution"], correct: 1, expl: "En faible charge, 3 pistons seraient inutiles et consommeraient de l'énergie. Le désactivateur permet de fonctionner sur 2 pistons, réduisant la puissance absorbée et l'échauffement du carburant." }
+];
+
+let current = 0, score = 0, answered = false, userAnswers = [];
+let shuffled = [];
+const LETTERS = ['A','B','C','D'];
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length-1; i>0; i--) { const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+
+function checkPrenom() {
+  const v = document.getElementById('prenom').value.trim();
+  document.getElementById('btn-start').disabled = v.length < 2;
+}
+
+function startQuiz() {
+  shuffled = shuffle(questions);
+  current = 0; score = 0; userAnswers = [];
+  show('screen-quiz');
+  renderQ();
+}
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function renderQ() {
+  const q = shuffled[current];
+  answered = false;
+  document.getElementById('q-num').textContent = `Question ${current+1} / ${shuffled.length}`;
+  document.getElementById('q-score').textContent = `Score : ${score}`;
+  document.getElementById('progress-fill').style.width = `${(current/shuffled.length)*100}%`;
+  document.getElementById('q-theme').textContent = q.theme;
+  document.getElementById('q-text').textContent = q.q;
+
+  const fb = document.getElementById('feedback');
+  fb.style.display = 'none'; fb.className = 'feedback';
+  document.getElementById('next-btn').style.display = 'none';
+
+  const opts = document.getElementById('q-options');
+  opts.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.innerHTML = `<span class="opt-letter">${LETTERS[i]}</span><span>${opt}</span>`;
+    btn.onclick = () => answer(i);
+    opts.appendChild(btn);
+  });
+}
+
+function answer(idx) {
+  if (answered) return;
+  answered = true;
+  const q = shuffled[current];
+  const ok = idx === q.correct;
+  if (ok) score++;
+  userAnswers.push({ theme: q.theme, correct: ok, q: q.q });
+
+  document.querySelectorAll('.opt').forEach((b, i) => {
+    b.disabled = true;
+    if (i === q.correct) b.classList.add('correct');
+    else if (i === idx && !ok) b.classList.add('wrong');
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.style.display = 'block';
+  fb.className = 'feedback ' + (ok ? 'correct' : 'wrong');
+  document.getElementById('fb-title').textContent = ok ? 'Bonne réponse !' : 'Pas tout à fait…';
+  document.getElementById('fb-text').textContent = q.expl;
+
+  const nb = document.getElementById('next-btn');
+  nb.style.display = 'block';
+  nb.textContent = current < shuffled.length-1 ? 'Question suivante →' : 'Voir mon résultat';
+  nb.onclick = () => { current++; current < shuffled.length ? renderQ() : showResults(); };
+}
+
+function showResults() {
+  show('screen-results');
+  const pct = Math.round((score/shuffled.length)*100);
+  document.getElementById('res-score').textContent = `${score} / ${shuffled.length}`;
+  document.getElementById('res-pct').textContent = `soit ${pct}% de bonnes réponses`;
+
+  let icon, mention, cls;
+  if (pct >= 80) { icon='🏆'; mention='Excellent – Maîtrise acquise'; cls='excellent'; }
+  else if (pct >= 60) { icon='👍'; mention='Bien – Quelques points à revoir'; cls='bien'; }
+  else if (pct >= 40) { icon='📖'; mention='Passable – Revoir le cours'; cls='passable'; }
+  else { icon='⚠️'; mention='Insuffisant – Cours à relire attentivement'; cls='insuffisant'; }
+
+  document.getElementById('res-icon').textContent = icon;
+  const m = document.getElementById('res-mention');
+  m.textContent = mention; m.className = `mention ${cls}`;
+
+  const recap = document.getElementById('recap-list');
+  recap.innerHTML = '';
+  document.getElementById('recap-title').style.display = 'block';
+  userAnswers.forEach((a, i) => {
+    const el = document.createElement('div');
+    el.className = 'recap-item';
+    el.innerHTML = `<span class="dot ${a.correct?'ok':'ko'}"></span><span><strong>Q${i+1}</strong> — ${a.theme} : ${a.correct ? 'Correct ✓' : 'Incorrect ✗'}</span>`;
+    recap.appendChild(el);
+  });
+
+  sendToSheets(pct);
+}
+
+function sendToSheets(pct) {
+  if (APPS_SCRIPT_URL === "COLLEZ_ICI_VOTRE_URL_APPS_SCRIPT") {
+    document.getElementById('sending-msg').textContent = "⚠️ URL Apps Script non configurée — résultats non envoyés.";
+    return;
+  }
+  const prenom = document.getElementById('prenom').value.trim();
+  const now = new Date().toLocaleString('fr-FR');
+  const detail = userAnswers.map((a,i) => `Q${i+1}:${a.correct?'✓':'✗'}`).join(' | ');
+  const payload = { prenom, date: now, score: `${score}/${shuffled.length}`, pourcentage: `${pct}%`, detail };
+
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).then(() => {
+    document.getElementById('sending-msg').textContent = "✅ Résultats envoyés à votre formateur.";
+  }).catch(() => {
+    document.getElementById('sending-msg').textContent = "❌ Erreur d'envoi — vérifiez la connexion.";
+  });
+}
+
+function restart() {
+  document.getElementById('prenom').value = '';
+  document.getElementById('btn-start').disabled = true;
+  show('screen-accueil');
+}
+</script>
+</body>
+</html>
